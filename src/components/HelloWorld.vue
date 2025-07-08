@@ -19,11 +19,11 @@ onMounted(() => {
 
 <template>
   <div>
-    <h2>Lista de Citas</h2>
+    <h2 class=" text-gray-100">Lista de Citas</h2>
 
     <div v-if="error">{{ error }}</div>
 
-    <table v-else class="tabla">
+    <table v-else class="tabla ">
       <thead>
         <tr>
           <th>#</th>
@@ -32,7 +32,7 @@ onMounted(() => {
           <th>Fecha</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="text-gray-100">
         <tr v-for="(cita, index) in citas" :key="cita.id">
           <td>{{ index + 1 }}</td>
           <td>{{ cita.nombre_paciente }}</td>
