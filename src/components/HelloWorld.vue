@@ -1,47 +1,65 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '../api'
 
-// Variable para almacenar el mensaje desde Laravel
-const mensaje = ref('Cargando...')
+const citas = ref([])
+const error = ref('')
 
-// Llamada a la API al montar el componente
 onMounted(() => {
-  axios.get(`${import.meta.env.VITE_API_URL}/hola`)
+  api.get('/citas')
     .then(response => {
-    mensaje.value = response.data.message
+      citas.value = response.data
     })
-    .catch(error => {
-      mensaje.value = 'Error al conectar con Laravel'
-      console.error(error)
+    .catch(err => {
+      error.value = err.response?.data?.message || 'Error al obtener citas'
+      console.error(err)
     })
 })
 </script>
 
 <template>
-  <div class="card">
-    <h1>{{ mensaje }}</h1>
+  <div>
+    <h2>Lista de Citas</h2>
 
-    <p>
-      Edita el archivo
-      <code>components/HelloWorld.vue</code>
-      para probar la conexión con Laravel.
-    </p>
+    <div v-if="error">{{ error }}</div>
+
+    <table v-else class="tabla">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Teléfono</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(cita, index) in citas" :key="cita.id">
+          <td>{{ index + 1 }}</td>
+          <td>{{ cita.nombre_paciente }}</td>
+          <td>{{ cita.telefono_paciente }}</td>
+          <td>{{ cita.fecha_hora_cita }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-
-  <p>
-    Aprende más sobre Vue en
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank">create-vue</a>
-  </p>
-  <p>
-    IDEs recomendados para Vue en
-    <a href="https://vuejs.org/guide/scaling-up/tooling.html#ide-support" target="_blank">la guía oficial</a>
-  </p>
-  <p class="read-the-docs">Haz clic en los logos para más información</p>
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.tabla th,
+.tabla td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.tabla th {
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
 </style>
